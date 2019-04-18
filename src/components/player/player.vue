@@ -82,7 +82,6 @@ export default {
     },
     _getSingerList () {
       getPlaylist().then((res) => {
-        debugger
       })
     }
   }
