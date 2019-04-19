@@ -59,7 +59,7 @@
 
 <script>
 import progressBar from 'base/progress-bar/progress-bar'
-import {getPlaylist} from 'api/player'
+import {login, loginRefresh, logout} from 'api/index'
 export default {
   components: {
     progressBar
@@ -72,16 +72,29 @@ export default {
   },
   created () {
     setTimeout(() => {
-      this.aa()
-      this._getSingerList()
+      // this._logout()
+      // this._login()
+      // this._loginRefresh()
     }, 20)
   },
   methods: {
-    aa () {
-      this.$refs.audio.play()
+    _login () {
+      let params = {
+        email: '18588773304@163.com',
+        password: 'zzydr19950905..'
+      }
+      login(params).then((res) => {
+        debugger
+      })
     },
-    _getSingerList () {
-      getPlaylist().then((res) => {
+    _loginRefresh () {
+      loginRefresh().then((res) => {
+        debugger
+      })
+    },
+    _logout () {
+      logout().then((res) => {
+        debugger
       })
     }
   }
