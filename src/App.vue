@@ -11,8 +11,5 @@ export default {
 </script>
 
 <style lang="stylus">
-html, body {
-  background #333
-  color #fff
-}
+
 </style>

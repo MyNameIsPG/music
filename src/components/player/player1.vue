@@ -1,30 +1,102 @@
 <template>
   <div class="player">
-    <m-header></m-header>
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
+    <div class="normal-player">
+      <div class="background">
+        <img width="100%" height="100%" src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003y8dsH2wBHlo.jpg?max_age=2592000">
+      </div>
+      <div class="top">
+        <div class="back">
+          <i class="icon-back"></i>
+        </div>
+        <h1 class="title">mng</h1>
+        <h2 class="subtitle">sd</h2>
+      </div>
+      <div class="middle">
+        <div class="middle-l" ref="middleL">
+          <div class="cd-wrapper" ref="cdWrapper">
+            <div class="cd" ref="imageWrapper">
+              <img ref="image" class="image" src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003y8dsH2wBHlo.jpg?max_age=2592000">
+            </div>
+          </div>
+          <div class="playing-lyric-wrapper">
+            <div class="playing-lyric">sdsd</div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom">
+        <div class="dot-wrapper">
+
+        </div>
+        <div class="progress-wrapper">
+          <span class="time time-l">01</span>
+          <div class="progress-bar-wrapper">
+            <progress-bar></progress-bar>
+          </div>
+          <span class="time time-r">0.2</span>
+        </div>
+        <div class="operators">
+          <div class="icon i-left">
+            <i class="icon-sequence"></i>
+          </div>
+          <div class="icon i-left">
+            <i class="icon-prev"></i>
+          </div>
+          <div class="icon i-center">
+            <i class="icon-play"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-next"></i>
+          </div>
+          <div class="icon i-right">
+            <i class="icon-not-favorite"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <audio ref="audio"></audio>
   </div>
 </template>
 
 <script>
-import MHeader from 'components/m-header/m-header'
+import progressBar from 'base/progress-bar/progress-bar'
+import {login, loginRefresh, logout} from 'api/index'
 export default {
   components: {
-    MHeader
+    progressBar
   },
   data () {
     return {
-
+      url: 'http://dl.stream.qqmusic.qq.com/C400001Qu4I30eVFYb.m4a?guid=1961219640&vkey=2135A82209265C8A8B55505EFDD04443DE84D7A9476275C0011AE73C8A5C0A07335F5B8DC3CED002C4458FE3A86058F4B9A4E2CD685D16B5&uin=0&fromtag=38',
+      singers: []
     }
   },
   created () {
     setTimeout(() => {
-
+       // this._logout()
+       this._login()
+       this._loginRefresh()
     }, 20)
   },
   methods: {
-
+    _login () {
+      let params = {
+        email: '18588773304@163.com',
+        password: 'zzydr19950905..'
+      }
+      login(params).then((res) => {
+        debugger
+      })
+    },
+    _loginRefresh () {
+      loginRefresh().then((res) => {
+        debugger
+      })
+    },
+    _logout () {
+      logout().then((res) => {
+        debugger
+      })
+    }
   }
 }
 </script>

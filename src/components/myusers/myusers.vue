@@ -1,11 +1,11 @@
 <template>
-  <div class="playlist">
-
-  </div>
+    <div class="myusers">
+        wode
+    </div>
 </template>
 
 <script>
-export default {}
+  export default {}
 </script>
 
 <style scoped lang="stylus">

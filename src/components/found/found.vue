@@ -1,11 +1,11 @@
 <template>
-  <div class="playlist">
-
-  </div>
+    <div class="found">
+        faxian
+    </div>
 </template>
 
 <script>
-export default {}
+  export default {}
 </script>
 
 <style scoped lang="stylus">
