@@ -4,13 +4,20 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import App from './App'
 import router from './router'
+import VueLazyload from 'vue-lazyload'
 import 'common/stylus/index.styl'
 Vue.config.productionTip = false
 Vue.use(Vuex)
-
+Vue.use(VueLazyload, {
+  loading: require('common/image/default.png')
+})
 const store = new Vuex.Store({
   // 全局状态
   state: {
+    coverList: {
+      name: '',
+      url: ''
+    },
     player: {
       id: '',
       name: '',

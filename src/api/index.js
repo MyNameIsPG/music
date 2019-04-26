@@ -1,4 +1,4 @@
-import axiosTokenPost from 'common/js/axiosToken'
+// import axiosTokenPost from 'common/js/axiosToken'
 import axiosTokenGet from 'common/js/axiosTokenGet'
 const path = 'http://localhost:3000'
 
