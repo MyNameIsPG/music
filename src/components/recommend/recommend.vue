@@ -5,7 +5,7 @@
         <slider ref="slider">
           <div v-for="(item,index) in bannerList" :key="index">
             <a href="javascript:void(0);">
-              <img @load="loadImage" :src="item.imageUrl">
+              <img :src="item.imageUrl">
             </a>
           </div>
         </slider>
@@ -18,7 +18,7 @@
       </div>
       <div class="recommend-gorup-body">
         <ul v-if="personalizedList.length">
-          <li v-for="(item,index) in personalizedList" :key="index">
+          <li v-for="(item,index) in personalizedList" :key="index" @click="_linkPlayerDetail(item.id)">
             <img :src="item.picUrl" alt="">
             <h3>{{item.name}}</h3>
           </li>
@@ -63,13 +63,8 @@ export default {
         }
       })
     },
-    loadImage () {
-      if (!this.checkloaded) {
-        this.checkloaded = true
-        setTimeout(() => {
-          this.$refs.scroll.refresh()
-        }, 20)
-      }
+    _linkPlayerDetail (id) {
+      this.$router.push({ path: `/playlist/detail?id=${id}` })
     }
   }
 }

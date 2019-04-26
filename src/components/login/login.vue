@@ -42,14 +42,10 @@ export default {
           email: this.form.username,
           password: this.form.password
         }
-        setTimeout(() => {
-          login(params).then((res) => {
-            debugger
-            if (res.code === ERR_OK) {
-              debugger
-              this.$router.push({ path: `/player` })
-            }
-          })
+        login(params).then((res) => {
+          if (res.code === ERR_OK) {
+            this.$router.push({ path: `/player` })
+          }
         })
       }
     }

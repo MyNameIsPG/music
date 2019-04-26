@@ -7,21 +7,23 @@ const playlist = () => import('components/playlist/playlist')
 const myusers = () => import('components/myusers/myusers')
 const recommend = () => import('components/recommend/recommend')
 const found = () => import('components/found/found')
+const playlistDetail = () => import('components/playlist-detail/playlist-detail')
 Vue.use(Router)
 
 export default new Router({
   routes: [
     { path: '/login', name: 'login', component: login },
     {
-      path: '/player',
-      name: 'player',
-      component: player,
+      path: '/playlist',
+      name: 'playlist',
+      component: playlist,
       children: [
-        { path: '/player', redirect: '/player/recommend' },
-        { path: '/player/myusers', name: 'myusers', component: myusers },
-        { path: '/player/recommend', name: 'recommend', component: recommend },
-        { path: '/player/found', name: 'found', component: found }
+        { path: '/playlist', redirect: '/playlist/recommend' },
+        { path: '/playlist/myusers', name: 'myusers', component: myusers },
+        { path: '/playlist/recommend', name: 'recommend', component: recommend },
+        { path: '/playlist/found', name: 'found', component: found }
      ]},
-    { path: '/playlist', name: 'playlist', component: playlist }
+    { path: '/playlist/detail', name: 'playlistDetail', component: playlistDetail },
+    { path: '/player', name: 'player', component: player }
   ]
 })

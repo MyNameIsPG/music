@@ -1,21 +1,28 @@
 <template>
   <div class="m-header">
-    <div class="m-header-icon-left">
-      <i class="fa fa-bars"></i>
+    <div class="m-header-icon-left" @click="_back">
+      <i class="fa fa-chevron-left"></i>
     </div>
     <ul class="list">
-      <router-link tag="li" to="/playlist/myusers">我的</router-link>
-      <router-link tag="li" to="/playlist/recommend">推荐</router-link>
-      <router-link tag="li" to="/playlist/found">发现</router-link>
+      <li>{{name}}</li>
     </ul>
-    <div class="m-header-icon-right">
-      <i class="fa fa-search"></i>
-    </div>
   </div>
 </template>
 
 <script>
-export default {}
+export default {
+  props: {
+    name: {
+      type: String,
+      default: ''
+    }
+  },
+  methods: {
+    _back () {
+      this.$router.back()
+    }
+  }
+}
 </script>
 
 <style lang="stylus" scoped>
