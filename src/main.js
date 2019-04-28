@@ -14,19 +14,20 @@ Vue.use(VueLazyload, {
 const store = new Vuex.Store({
   // 全局状态
   state: {
+    // 封面名称、图片
     coverList: {
       name: '',
       url: ''
     },
+    // 播放界面歌曲名称、作者、id、
     player: {
       id: '',
       name: '',
       singer: '',
-      album: '',
-      filename: '',
       image: '',
-      url: '',
-      time: ''
+      time: '',
+      sequenceList: [],
+      playlist: []
     }
   },
   getters: {

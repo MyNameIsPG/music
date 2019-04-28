@@ -4,14 +4,17 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
+    <playlist-detail></playlist-detail>
   </div>
 </template>
 
 <script>
 import MHeader from 'components/m-header/m-header'
+import PlaylistDetail from 'components/playlist-detail/playlist-detail'
 export default {
   components: {
-    MHeader
+    MHeader,
+    PlaylistDetail
   },
   data () {
     return {

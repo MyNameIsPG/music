@@ -60,7 +60,7 @@
 
 <script>
 import progressBar from 'base/progress-bar/progress-bar'
-import {songUrl} from 'api/index'
+import {songUrl, lyric} from 'api/index'
 import {ERR_OK} from 'api/config'
 import { mapState } from 'vuex'
 export default {
@@ -70,7 +70,9 @@ export default {
   data () {
     return {
       url: '',
-      songList: []
+      songList: [],
+      lyricList: '',
+      currentLyric: null
     }
   },
   computed: {
@@ -80,23 +82,10 @@ export default {
     this.touch = {}
     setTimeout(() => {
       this._songUrl()
+      this._lyric()
     }, 20)
   },
   methods: {
-    middleTouchStart (e) {
-      this.touch.initiated = true
-      // 用来判断是否是一次移动
-      this.touch.moved = false
-      const touch = e.touches[0]
-      this.touch.startX = touch.pageX
-      this.touch.startY = touch.pageY
-    },
-    middleTouchMove (e) {
-
-    },
-    middleTouchEnd () {
-
-    },
     _songUrl () {
       let params = {
         id: this.player.id
@@ -105,6 +94,16 @@ export default {
         if (res.code === ERR_OK) {
           this.url = res.data[0].url
           this.songList = res.data[0]
+        }
+      })
+    },
+    _lyric () {
+      let params = {
+        id: this.player.id
+      }
+      lyric(params).then((res) => {
+        if (res.code === ERR_OK) {
+          this.lyricList = res.lrc.lyric
         }
       })
     },

@@ -140,17 +140,18 @@ export default {
             margin-right 5%
             box-sizing border-box
             margin-bottom px2rem(10)
+            text-overflow ellipsis
+            overflow hidden
+            white-space nowrap
             &:nth-child(3n+0)
               margin-right 0
             img
               width 100%
             h3
               color #323232
-              overflow hidden
               text-overflow ellipsis
-              display -webkit-box
-              -webkit-box-orient vertical
-              -webkit-line-clamp 1
+              overflow hidden
+              white-space nowrap
   .loading-container
     position: absolute
     width: 100%

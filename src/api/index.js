@@ -81,3 +81,13 @@ export function songUrl (params) {
     })
   })
 }
+
+// 获取歌词 id
+export function lyric (params) {
+  const url = path + '/lyric'
+  return new Promise((resolve, reject) => {
+    axiosTokenGet.get(url, {params: params}).then(data => {
+      resolve(data.data)
+    })
+  })
+}

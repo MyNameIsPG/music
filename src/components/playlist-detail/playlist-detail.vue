@@ -93,6 +93,20 @@ export default {
       playlistDetail(params).then((res) => {
         if (res.code === ERR_OK) {
           this.playlistDetailList = res.playlist
+          let arr1 = []
+          let arr2 = []
+          for (var i = 0; i < this.playlistDetailList.tracks.length; i++) {
+            let arr = {}
+            arr.id = this.playlistDetailList.trackIds[i].id
+            arr.name = this.playlistDetailList.tracks[i].name
+            arr.image = this.playlistDetailList.tracks[i].al.picUrl
+            arr.singer = this.playlistDetailList.tracks[i].ar[0].name
+            arr.time = this.playlistDetailList.tracks[i].dt
+            arr1.push(arr)
+            arr2.push(arr)
+          }
+          this.$store.state.player.playlist = arr1
+          this.$store.state.player.sequenceList = arr2.sort(() => Math.random() - 0.5)
         }
       })
     },
@@ -104,9 +118,9 @@ export default {
           this.$store.state.player.singer = v.ar[0].name
           this.$store.state.player.image = v.al.picUrl
           this.$store.state.player.time = v.dt
-          this.$router.push({ path: `/player` })
         }
       })
+      // this.$router.push({ path: `/player` })
     }
   },
   watch: {
@@ -154,6 +168,9 @@ export default {
   top 0px
   bottom 0px
   width 100%
+  background #333
+  z-index 99
+  display none
   .back
     position absolute
     top 0
