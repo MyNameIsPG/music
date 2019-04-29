@@ -83,7 +83,9 @@ export default {
   methods: {
     handleFullScreen (obj) {
       if (!obj) {
-        this.$refs.list.style.bottom = '60px'
+        this.$refs.list.$el.style.bottom = '60px'
+      } else {
+        this.$refs.list.$el.style.bottom = ''
       }
       this.$refs.list.refresh()
     },
@@ -255,7 +257,7 @@ export default {
       bottom: 0
       width: 100%
       .playlist-detail-list-content
-        padding 20px 0px
+        padding 20px 0px 0
         box-sizing border-box
         background: $color-background
         position relative

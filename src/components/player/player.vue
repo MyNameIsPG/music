@@ -7,13 +7,13 @@
         </div>
         <div class="top">
           <div class="back" @click="back()">
-            <i class="fa fa-chevron-left"></i>
+            <i class="fa fa-chevron-down"></i>
           </div>
           <h1 class="title">{{player.name}}</h1>
           <h2 class="subtitle">{{player.singer}}</h2>
         </div>
         <div class="middle">
-          <div class="middle-l" ref="middleL">
+          <!--<div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" ref="imageWrapper">
                 <img ref="image" class="image" :src="player.image">
@@ -22,7 +22,19 @@
             <div class="playing-lyric-wrapper">
               <div class="playing-lyric">sdsd</div>
             </div>
-          </div>
+          </div>-->
+          <scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p ref="lyricLine"
+                   class="text"
+                   :class="{'current': currentLineNum ===index}"
+                   v-for="(line,index) in currentLyric.lines"
+                   :key="index"
+                >{{line.txt}}</p>
+              </div>
+            </div>
+          </scroll>
         </div>
         <div class="bottom">
           <div class="dot-wrapper">
@@ -74,7 +86,7 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" @playing="ready" @error="error"></audio>
+    <audio ref="audio" @playing="ready" @error="error" @timeupdate="updateTime"></audio>
   </div>
 </template>
 
@@ -83,6 +95,7 @@ import progressBar from 'base/progress-bar/progress-bar'
 import {songUrl, lyric} from 'api/index'
 import {ERR_OK} from 'api/config'
 import { mapState } from 'vuex'
+import Lyric from 'lyric-parser'
 export default {
   components: {
     progressBar
@@ -94,7 +107,8 @@ export default {
       songList: [],
       lyricList: '',
       currentLyric: null,
-      playAdnStop: false
+      playAdnStop: false,
+      currentTime: 0
     }
   },
   computed: {
@@ -186,8 +200,21 @@ export default {
       lyric(params).then((res) => {
         if (res.code === ERR_OK) {
           this.lyricList = res.lrc.lyric
+          this.currentLyric = new Lyric(this.lyricList, this.handleLyric)
+          this.currentLyric.seek(this.currentTime * 1000)
+          console.log(lyric)
         }
       })
+    },
+    handleLyric ({ lineNum, txt }) {
+      if (!this.$refs.lyricLine) {
+        return false
+      }
+      this.currentLineNum = lineNum
+      this.playingLyric = txt
+    },
+    updateTime (e) {
+      this.currentTime = e.target.currentTime
     },
     _pad (num, n = 2) {
       let len = num.toString().length
@@ -208,6 +235,7 @@ export default {
     url (item) {
       this.$refs.audio.src = item
       this.$refs.audio.play()
+      this.currentTime = this.$refs.audio.currentTime
     },
     player: {
       handler (obj) {
