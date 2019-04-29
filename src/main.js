@@ -14,6 +14,12 @@ Vue.use(VueLazyload, {
 const store = new Vuex.Store({
   // 全局状态
   state: {
+    // 第一次
+    firstPage: false,
+    // 大小界面控制
+    fullScreen: true,
+    // 控制播放器顯示
+    setFullScreen: false,
     // 封面名称、图片
     coverList: {
       name: '',
@@ -25,10 +31,11 @@ const store = new Vuex.Store({
       name: '',
       singer: '',
       image: '',
-      time: '',
-      sequenceList: [],
-      playlist: []
-    }
+      time: ''
+    },
+    sequenceList: [],
+    playlist: [],
+    currentIndex: 0
   },
   getters: {
 

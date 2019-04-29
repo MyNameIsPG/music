@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <scroll ref="scroll" :data="personalizedList" class="recommend-content">
       <div>
         <div v-if="bannerList.length" class="slider-wrapper">
@@ -32,6 +32,7 @@
     <div class="loading-container" v-show="!personalizedList.length">
       <loading></loading>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -42,7 +43,9 @@ import Loading from 'base/loading/loading'
 import {banner, personalized} from 'api/index'
 import {ERR_OK} from 'api/config'
 import {mapState} from 'vuex'
+import {fullScreenMixin} from 'common/js/mixin'
 export default {
+  mixins: [fullScreenMixin],
   components: {
     Slider,
     Scroll,
@@ -55,7 +58,7 @@ export default {
     }
   },
   computed: {
-    ...mapState(['coverList'])
+    ...mapState(['coverList', 'player', 'fullScreen'])
   },
   created () {
     setTimeout(() => {
@@ -64,6 +67,14 @@ export default {
     }, 20)
   },
   methods: {
+    handleFullScreen (obj) {
+      if (obj) {
+        this.$refs.recommend.style.bottom = ''
+      } else {
+        this.$refs.recommend.style.bottom = '60px'
+      }
+      this.$refs.scroll.refresh()
+    },
     _banner () {
       banner().then((res) => {
         if (res.code === ERR_OK) {
@@ -89,7 +100,7 @@ export default {
     _linkPlayerDetail (item) {
       this.$store.state.coverList.name = item.name
       this.$store.state.coverList.url = item.picUrl
-      this.$router.push({ path: `/playlist/detail?id=${item.id}` })
+      this.$router.push({ path: `/playlist/recommend/${item.id}` })
     }
   }
 }
@@ -117,13 +128,11 @@ export default {
         left 0
         width 100%
     .recommend-group
-      background #ffffff
-      border 1px solid #efefef
       .recommend-group-head
         padding px2rem(10) px2rem(15)
         overflow hidden
         h2
-          color #323232
+          color #fff
           font-size px2rem(18)
         a
           float right
@@ -148,10 +157,12 @@ export default {
             img
               width 100%
             h3
-              color #323232
+              color #f8f8f8
               text-overflow ellipsis
               overflow hidden
               white-space nowrap
+              margin-top px2rem(8)
+              font-size px2rem(14)
   .loading-container
     position: absolute
     width: 100%

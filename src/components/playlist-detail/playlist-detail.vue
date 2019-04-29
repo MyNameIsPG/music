@@ -33,7 +33,6 @@
               <loading></loading>
             </div>
           </scroll>
-
         </div>
       </div>
     </div>
@@ -47,10 +46,12 @@ import {playlistDetail} from 'api/index'
 import {ERR_OK} from 'api/config'
 import {prefixStyle} from 'common/js/dom'
 import {mapState} from 'vuex'
+import {fullScreenMixin} from 'common/js/mixin'
 const RESERVED_HEIGHT = 40
 const transform = prefixStyle('transform')
 const backdrop = prefixStyle('backdrop-filter')
 export default {
+  mixins: [fullScreenMixin],
   components: {
     Loading,
     Scroll
@@ -65,7 +66,7 @@ export default {
     bgStyle () {
       return `background-image:url(${this.coverList.url})`
     },
-    ...mapState(['player', 'coverList'])
+    ...mapState(['player', 'playlist', 'sequenceList', 'coverList', 'setFullScreen', 'fullScreen'])
   },
   mounted () {
     this.imageHeight = this.$refs.bgImage.clientHeight
@@ -80,6 +81,12 @@ export default {
     }, 20)
   },
   methods: {
+    handleFullScreen (obj) {
+      if (!obj) {
+        this.$refs.list.style.bottom = '60px'
+      }
+      this.$refs.list.refresh()
+    },
     scroll (pos) {
       this.scrollY = pos.y
     },
@@ -88,14 +95,14 @@ export default {
     },
     _playlistDetail () {
       let params = {
-        id: this.$route.query.id
+        id: this.$route.params.id
       }
       playlistDetail(params).then((res) => {
         if (res.code === ERR_OK) {
           this.playlistDetailList = res.playlist
           let arr1 = []
           let arr2 = []
-          for (var i = 0; i < this.playlistDetailList.tracks.length; i++) {
+          for (let i = 0; i < this.playlistDetailList.tracks.length; i++) {
             let arr = {}
             arr.id = this.playlistDetailList.trackIds[i].id
             arr.name = this.playlistDetailList.tracks[i].name
@@ -105,8 +112,8 @@ export default {
             arr1.push(arr)
             arr2.push(arr)
           }
-          this.$store.state.player.playlist = arr1
-          this.$store.state.player.sequenceList = arr2.sort(() => Math.random() - 0.5)
+          this.$store.state.playlist = arr1
+          this.$store.state.sequenceList = arr2.sort(() => Math.random() - 0.5)
         }
       })
     },
@@ -120,6 +127,9 @@ export default {
           this.$store.state.player.time = v.dt
         }
       })
+      this.$store.state.setFullScreen = true
+      this.$store.state.firstPage = true
+      this.$store.state.fullScreen = true
       // this.$router.push({ path: `/player` })
     }
   },
@@ -170,7 +180,6 @@ export default {
   width 100%
   background #333
   z-index 99
-  display none
   .back
     position absolute
     top 0

@@ -4,22 +4,26 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
-    <playlist-detail></playlist-detail>
+    <player></player>
   </div>
 </template>
 
 <script>
 import MHeader from 'components/m-header/m-header'
-import PlaylistDetail from 'components/playlist-detail/playlist-detail'
+import Player from 'components/player/player'
+import { mapState } from 'vuex'
 export default {
   components: {
     MHeader,
-    PlaylistDetail
+    Player
   },
   data () {
     return {
 
     }
+  },
+  computed: {
+    ...mapState(['coverList', 'player'])
   },
   created () {
     setTimeout(() => {

@@ -1,60 +1,80 @@
 <template>
-  <div class="player">
-    <div class="normal-player">
-      <div class="background">
-        <img width="100%" height="100%" src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003y8dsH2wBHlo.jpg?max_age=2592000">
-      </div>
-      <div class="top">
-        <div class="back">
-          <i class="icon-back"></i>
+  <div class="player" v-show="setFullScreen">
+    <transition name="normal">
+      <div class="normal-player" v-show="fullScreen">
+        <div class="background">
+          <img width="100%" height="100%" src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003y8dsH2wBHlo.jpg?max_age=2592000">
         </div>
-        <h1 class="title">{{player.name}}</h1>
-        <h2 class="subtitle">{{player.singer}}</h2>
-      </div>
-
-      <div class="middle">
-        <div class="middle-l" ref="middleL">
-          <div class="cd-wrapper" ref="cdWrapper">
-            <div class="cd" ref="imageWrapper">
-              <img ref="image" class="image" :src="player.image">
+        <div class="top">
+          <div class="back" @click="back()">
+            <i class="fa fa-chevron-left"></i>
+          </div>
+          <h1 class="title">{{player.name}}</h1>
+          <h2 class="subtitle">{{player.singer}}</h2>
+        </div>
+        <div class="middle">
+          <div class="middle-l" ref="middleL">
+            <div class="cd-wrapper" ref="cdWrapper">
+              <div class="cd" ref="imageWrapper">
+                <img ref="image" class="image" :src="player.image">
+              </div>
+            </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">sdsd</div>
             </div>
           </div>
-          <div class="playing-lyric-wrapper">
-            <div class="playing-lyric">sdsd</div>
-          </div>
         </div>
-      </div>
-      <div class="bottom">
-        <div class="dot-wrapper">
+        <div class="bottom">
+          <div class="dot-wrapper">
 
-        </div>
-        <div class="progress-wrapper" v-if="songList">
-          <span class="time time-l">01</span>
-          <div class="progress-bar-wrapper">
-            <progress-bar></progress-bar>
           </div>
-          <span class="time time-r">{{format(player.time)}}</span>
-        </div>
-        <div class="operators">
-          <div class="icon i-left">
-            <i class="fa fa-random"></i>
+          <div class="progress-wrapper" v-if="songList">
+            <span class="time time-l">01</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar></progress-bar>
+            </div>
+            <span class="time time-r">{{format(player.time)}}</span>
           </div>
-          <div class="icon i-left">
-            <i class="fa fa-backward"></i>
-          </div>
-          <div class="icon i-center">
-            <i class="fa fa-play"></i>
-          </div>
-          <div class="icon i-right">
-            <i class="fa fa-forward"></i>
-          </div>
-          <div class="icon i-right">
-            <i class="fa fa-heart-o"></i>
+          <div class="operators">
+            <div class="icon i-left">
+              <i class="fa fa-random"></i>
+            </div>
+            <div class="icon i-left">
+              <i class="fa fa-backward" @click="prev"></i>
+            </div>
+            <div class="icon i-center">
+              <i :class="playIcon" @click="togglePlaying"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="fa fa-forward" @click="next"></i>
+            </div>
+            <div class="icon i-right">
+              <i class="fa fa-heart-o"></i>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <audio ref="audio"></audio>
+    </transition>
+    <transition name="mini">
+      <div class="mini-player" v-show="!fullScreen" @click="open">
+        <div class="icon">
+          <div class="imgWrapper" ref="miniWrapper">
+            <img ref="miniImage" width="40" height="40" :src="player.image">
+          </div>
+        </div>
+        <div class="text">
+          <h2 class="name" v-html="player.name"></h2>
+          <p class="desc" v-html="player.singer"></p>
+        </div>
+        <div class="control">
+          <i class="fa fa-playi"></i>
+        </div>
+        <div class="control">
+          <i class="icon-playlist"></i>
+        </div>
+      </div>
+    </transition>
+    <audio ref="audio" @playing="ready" @error="error"></audio>
   </div>
 </template>
 
@@ -69,23 +89,85 @@ export default {
   },
   data () {
     return {
+      songReady: false,
       url: '',
       songList: [],
       lyricList: '',
-      currentLyric: null
+      currentLyric: null,
+      playAdnStop: false
     }
   },
   computed: {
-    ...mapState(['player'])
+    playIcon () {
+      return this.playAdnStop ? 'fa fa-play' : 'fa fa-pause'
+    },
+    ...mapState(['player', 'playlist', 'sequenceList', 'setFullScreen', 'firstPage', 'fullScreen', 'currentIndex'])
   },
   created () {
     this.touch = {}
     setTimeout(() => {
-      this._songUrl()
-      this._lyric()
+
     }, 20)
   },
   methods: {
+    // 关闭大界面
+    back () {
+      this.$store.state.setFullScreen = true
+      this.$store.state.fullScreen = false
+    },
+    // 打開小界面
+    open () {
+      this.$store.state.setFullScreen = true
+      this.$store.state.fullScreen = true
+    },
+    // 切換上一首
+    prev () {
+      if (!this.songReady) {
+        return false
+      } else {
+        let length = this.$store.state.playlist.length
+        if (length > 0) {
+          let index = this.$store.state.currentIndex
+          if (index === 0) {
+            this.$store.state.currentIndex = 0
+          } else {
+            this.$store.state.currentIndex--
+          }
+        }
+        this.$store.state.player = this.$store.state.playlist[this.$store.state.currentIndex]
+        this.playAdnStop = false
+      }
+    },
+    // 切換下一首
+    next () {
+      if (!this.songReady) {
+        return false
+      } else {
+        let length = this.$store.state.playlist.length
+        if (length > 0) {
+          let index = this.$store.state.currentIndex
+          if (index === length) {
+            this.$store.state.currentIndex = 0
+          } else {
+            this.$store.state.currentIndex++
+          }
+        }
+        this.$store.state.player = this.$store.state.playlist[this.$store.state.currentIndex]
+        this.playAdnStop = false
+      }
+    },
+    togglePlaying () {
+      if (!this.songReady) {
+        return false
+      }
+      this.playAdnStop = !this.playAdnStop
+    },
+    ready () {
+      this.songReady = true
+    },
+    error () {
+      this.songReady = true
+    },
     _songUrl () {
       let params = {
         id: this.player.id
@@ -126,6 +208,28 @@ export default {
     url (item) {
       this.$refs.audio.src = item
       this.$refs.audio.play()
+    },
+    player: {
+      handler (obj) {
+        if (obj.id === '') {
+          return false
+        } else {
+          this._songUrl()
+          this._lyric()
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    playAdnStop (item) {
+      const audio = this.$refs.audio
+      item ? audio.pause() : audio.play()
+    },
+    firstPage (item) {
+      if (item) {
+        this._songUrl()
+        this._lyric()
+      }
     }
   }
 }
@@ -160,12 +264,11 @@ export default {
         top: 0
         left: 6px
         z-index: 50
-        .icon-back
+        i
           display: block
           padding: 9px
           font-size: $font-size-large-x
           color: $color-theme
-          transform: rotate(-90deg)
       .title
         width: 70%
         margin: 0 auto
@@ -179,6 +282,16 @@ export default {
         text-align: center
         font-size: $font-size-medium
         color: $color-text
+    &.normal-enter-active, &.normal-leave-active
+    transition: all 0.4s
+    .title, .subtitle
+      transition: all 0.4s cubic-bezier(0.86, 0.18, 0.82, 1.32)
+    &.normal-enter, &.normal-leave-to
+      opacity: 0
+      .title
+        transform: translate3d(0, -100px, 0)
+      .subtitle
+        transform: translate3d(0, 100px, 0)
     .middle
       position: fixed
       width: 100%
@@ -371,7 +484,62 @@ export default {
         position: absolute
         left: 0
         top: 0
-
+  .mini-player
+    display: flex
+    align-items: center
+    position: fixed
+    left: 0
+    bottom: 0
+    z-index: 180
+    width: 100%
+    height: 60px
+    background: $color-highlight-background
+    &.mini-enter-active, &.mini-leave-active
+      transition: all 0.4s
+    &.mini-enter, &.mini-leave-to
+      opacity: 0
+    .icon
+      flex: 0 0 40px
+      width: 40px
+      height: 40px
+      padding: 0 10px 0 20px
+      .imgWrapper
+        height: 100%
+        width: 100%
+        img
+          border-radius: 50%
+          &.play
+            animation: rotate 10s linear infinite
+          &.pause
+            animation-play-state: paused
+    .text
+      display: flex
+      flex-direction: column
+      justify-content: center
+      flex: 1
+      line-height: 20px
+      overflow: hidden
+      .name
+        margin-bottom: 2px
+        no-wrap()
+        font-size: $font-size-medium
+        color: $color-text
+      .desc
+        no-wrap()
+        font-size: $font-size-small
+        color: $color-text-d
+    .control
+      flex: 0 0 30px
+      width: 30px
+      padding: 0 10px
+      .icon-play-mini, .icon-pause-mini, .icon-playlist
+        font-size: 30px
+        color: $color-theme-d
+      .icon-mini
+        font-size: 32px
+        position: absolute
+        left: 0
+        top: 0
 @keyframes rotate
   0%
     transform: rotate(0)

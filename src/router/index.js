@@ -21,10 +21,14 @@ export default new Router({
       children: [
         { path: '/playlist', redirect: '/playlist/recommend' },
         { path: '/playlist/myusers', name: 'myusers', component: myusers },
-        { path: '/playlist/recommend', name: 'recommend', component: recommend },
+        { path: '/playlist/recommend',
+          name: 'recommend',
+          component: recommend,
+          children: [
+            { path: ':id', component: playlistDetail }
+         ]},
         { path: '/playlist/found', name: 'found', component: found }
      ]},
-    { path: '/playlist/detail', name: 'playlistDetail', component: playlistDetail },
     { path: '/player', name: 'player', component: player }
   ]
 })
